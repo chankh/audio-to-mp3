@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Convert audio files to MP3
+Parameters:
+  BucketName:
+    Description: Name of S3 bucket
+    Type: String
+Resources:
+  ThumbnailFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: s3://khk-us-east-1/demos/serverless-app-repo/audio-to-mp3.zip
+      Handler: lambda_function.lambda_handler
+      Runtime: python2.7
+      Timeout: 300
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref ImageBucket
+            Events: s3:ObjectCreated:*
+
+  ImageBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
